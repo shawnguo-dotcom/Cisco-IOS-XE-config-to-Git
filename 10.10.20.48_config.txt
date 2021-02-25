@@ -1,8 +1,8 @@
 Building configuration...
 
-Current configuration : 4392 bytes
+Current configuration : 4816 bytes
 !
-! Last configuration change at 08:10:13 UTC Thu Feb 25 2021 by developer
+! Last configuration change at 10:36:19 UTC Thu Feb 25 2021 by developer
 !
 version 16.9
 service timestamps debug datetime msec
@@ -16,6 +16,24 @@ hostname csr1000v-1
 boot-start-marker
 boot-end-marker
 !
+!
+vrf definition blue
+ description Blue VRF
+ rd 1:410
+!
+vrf definition green
+ description Green VRF
+ rd 1:420
+!
+vrf definition local_vrfs
+!
+vrf definition mypod
+ description mypod VRF
+ rd 1:10
+!
+vrf definition red
+ description Red VRF
+ rd 1:400
 !
 no logging console
 enable secret 5 $1$20ue$uC.uSGo6nvfWs63EjjzRP.
@@ -135,9 +153,25 @@ redundancy
 ! 
 !
 !
-interface Loopback10
- description Pod Number 10
- ip address 10.111.10.1 255.255.255.255
+interface Loopback1110
+ description Pod Number 1110
+ vrf forwarding red
+ no ip address
+!
+interface Loopback1210
+ description Pod Number 1210
+ vrf forwarding blue
+ no ip address
+!
+interface Loopback1310
+ description Pod Number 1310
+ vrf forwarding green
+ no ip address
+!
+interface Loopback1410
+ description Pod Number 1410
+ vrf forwarding mypod
+ no ip address
 !
 interface GigabitEthernet1
  description MANAGEMENT INTERFACE - DON'T TOUCH ME
@@ -199,10 +233,6 @@ line vty 0 4
  login local
  transport input ssh
 !
-ntp server 10.11.10.65
-ntp server 10.12.10.65
-ntp server 10.13.10.65
-ntp server 10.14.10.65
 !
 !
 !
